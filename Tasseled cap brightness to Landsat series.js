@@ -6,8 +6,13 @@ By using this code and any data derived with it,
 you agree to cite the following reference 
 in any publications derived from them: ""
 
-This function applies a Tasseled cap transformation (DeVires et al., 2016) to Landsat series imagery.
+This function applies a Tasseled cap transformation developed by DeVires et al. (2016) to Landsat series imagery.
 in order to obtain a Tasseled cap brightness value at each pixel
+: DeVries, B., Pratihast, A. K., Verbesselt, J., Kooistra, L., & Herold, M. (2016). Characterizing forest change using community-based monitoring data and Landsat time series. PloS one, 11(3), e0147121.
+
+Also, you can access to Google Earth Engine (GEE) code
+- GEE Git: https://earthengine.googlesource.com/users/SEORIM/Taedong_River
+- GEE repository: https://code.earthengine.google.com/?accept_repo=users/SEORIM/Taedong_River
 */
 
 Map.setCenter(125.72239942629965,38.990859676683726);
