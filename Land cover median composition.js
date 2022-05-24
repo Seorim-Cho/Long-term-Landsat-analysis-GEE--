@@ -1,3 +1,20 @@
+/*
+Author: Seorim Cho (srcho@khu.ac.kr, chosrm15@gmail.com )
+
+This code is free and open. 
+By using this code and any data derived with it, 
+you agree to cite the following reference 
+in any publications derived from them: ""
+
+This function applies a Tasseled cap transformation developed by DeVires et al. (2016) to Landsat series imagery.
+in order to obtain a Tasseled cap brightness value at each pixel
+: DeVries, B., Pratihast, A. K., Verbesselt, J., Kooistra, L., & Herold, M. (2016). Characterizing forest change using community-based monitoring data and Landsat time series. PloS one, 11(3), e0147121.
+
+Also, you can access to Google Earth Engine (GEE) code
+- GEE Git: https://earthengine.googlesource.com/users/SEORIM/Taedong_River
+- GEE repository: https://code.earthengine.google.com/?accept_repo=users/SEORIM/Taedong_River
+*/
+
 Map.setCenter(125.72239942629965,38.990859676683726);
 Map.setOptions("SATELLITE");
 
@@ -90,104 +107,11 @@ Map.addLayer(median_pr4, l8visualization, 'Median_pr4');
 
 // Median Image Collection
 var median_col = ee.ImageCollection([median_pr1, median_pr2, median_pr3, median_pr4]);
-var median_clip =median_col.median().clip(watershed);
-
-    
-// Export each bands    
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B2'),
-      description: 'SR_B2',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
 
 
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B3'),
-      description: 'SR_B3',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B4'),
-      description: 'SR_B4',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B5'),
-      description: 'SR_B5',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B6'),
-      description: 'SR_B6',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-
-Export.image.toDrive({ 
-      image: median_clip.select('SR_B7'),
-      description: 'SR_B7',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-
-
-
-// Compute NDWI and Tasseled Cap Trasformation
+///////////////////////////////////////////////////////////////////////////////////
+// Compute  Tasseled Cap Trasformation
 var L8_col = L8pr1.merge(L8pr2).merge(L8pr3).merge(L8pr4);
-
-
-// NDWI
-// The Normalized Difference Water Index (NDWI) is derived from the Near-Infrared (NIR) and Green (G) channels.
-var addNDWI = function(image) {
-  var ndwi = image.normalizedDifference(['SR_B3', 'SR_B5']).rename('NDWI');
-  return image.addBands(ndwi);
-};
-
-var NDWI = L8_col.map(addNDWI).select('NDWI');
-
-Map.addLayer(NDWI.mean().clip(watershed), {min: -1, max: 1, palette: ['white', 'skyblue', 'blue']}, 'Mean NDWIpr2', false); // mean
-
-
-var NDWI_mean = NDWI.mean().clip(watershed);
-Export.image.toDrive({ 
-      image: NDWI_mean,
-      description: 'NDWI_mean',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-    
 
 // Tasseled cap brightness (DeVries et al,, 2016)
 var addTCB = function(image) {
@@ -204,18 +128,7 @@ var addTCB = function(image) {
   return image.addBands(TCB);
 };
 
-var TCB = L8_col.map(addTCB).select('TCB');
-var TCB_mean = TCB.mean().clip(watershed);
-Export.image.toDrive({ 
-      image: TCB_mean,
-      description: 'TCB_mean',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-    
+var TCB = L8_col.map(addTCB).select('TCB');    
     
 // Tasseled cap greenness (DeVries et al,, 2016)
 var addTCG = function(image) {
@@ -233,16 +146,7 @@ var addTCG = function(image) {
 };
 
 var TCG = L8_col.map(addTCG).select('TCG');
-var TCG_mean = TCG.mean().clip(watershed);
-Export.image.toDrive({ 
-      image: TCG_mean,
-      description: 'TCG_mean',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
+
 
 // Tasseled cap wetness(DeVries et al,, 2016)
 var addTCW = function(image) {
@@ -260,64 +164,3 @@ var addTCW = function(image) {
 };
 
 var TCW = L8_col.map(addTCW).select('TCW');
-var TCW_mean = TCW.mean().clip(watershed);
-Export.image.toDrive({ 
-      image: TCW_mean,
-      description: 'TCW_mean',
-      folder:'your_folder',
-      scale: 30,
-      fileFormat: 'GeoTIFF',
-      maxPixels: 57614177730,
-      region: watershed
-    });
-
-
-// Display Tributaries
-Map.addLayer(Piryu.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Piryu', false); 
-
-Map.addLayer(Hwangju.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Hwangju', false); 
-
-Map.addLayer(Chaeryoung.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Chaeryoung', false); 
-
-Map.addLayer(Sunhwa.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Sunhwa', false); 
-
-Map.addLayer(Nam.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Nam', false); 
-
-Map.addLayer(Hapjang.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Hapjang', false); 
-
-Map.addLayer(Potong.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Potong', false); 
-
-
-Map.addLayer(Konyang.style({
-  fillColor: '#ffffff00',
-  color: 'red',
-  width: 2.0
-}), {}, 'Konyang', false);
